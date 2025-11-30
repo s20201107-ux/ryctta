@@ -125,6 +125,18 @@
     color: #555;
     line-height: 1.6;
 }
+    .Photo { 
+      display: flex;            /* makes them horizontal */
+      gap: 10px;                /* space between photos */
+      padding: 20px;
+      overflow-x: auto;         /* scroll on mobile if too many */
+    }
+    .Photo img {
+      height: 300px;            /* all same height */
+      width: auto;              /* keeps original ratio */
+      flex-shrink: 0;           /* prevents squashing */
+    }
+  </style>
          </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="80">
@@ -177,7 +189,7 @@
                     <p><span data-cn>無論你是初學者還是國家級選手，這裡都是你的家。</span><span data-en>Beginner or national-level player — this is your home.</span></p>
                     <a href="#contact" class="btn btn-primary btn-lg mt-4"><span data-cn>成為會員 →</span><span data-en>Become a Member →</span></a><br>
                 </div>
-                <div class="col-lg-3 text-center mt-5 mt-lg-0">
+                <div class="Photo">
                     <img src="https://i.postimg.cc/Xv3YfsvJ/generated-image-2178ef5c-edb0-4d99-866c-fcc33177f040.png" alt="Club Interior" class="img-fluid rounded shadow-lg" width="1000" height="500">
                     <img src="https://i.postimg.cc/tZffm2Kz/IMG-3954.jpg" alt="Club Interior" class="img-fluid rounded shadow-lg" width="1000" height="500">
                     <img src="https://i.postimg.cc/3466bnsB/IMG-5911.jpg" alt="Club Interior" class="img-fluid rounded shadow-lg" width="1000" height="500">
