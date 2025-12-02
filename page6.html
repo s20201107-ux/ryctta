@@ -146,8 +146,21 @@
       width: auto;              /* keeps original ratio */
       flex-shrink: 0;           /* prevents squashing */
     }
+         .racket-card {
+            transition: all 0.3s;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .racket-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .price { font-size: 2rem; color: #e74c3c; font-weight: 700; }
+        .old-price { text-decoration: line-through; color: #95a5a6; margin-left: 10px; }
+        .badge-pro { background: #c0392b; }
+        .badge-new { background: #27ae60; }
+        .specs { font-size: 0.9rem; color: #555; }
+        footer { background: #2c3e50; color: #ecf0f1; }
   </style>
-         </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="80">
 
@@ -166,30 +179,91 @@
                      <li class="nav-item"><a class="nav-link" href="page1.html"><span data-cn>教練團隊</span><span data-en>Coach</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="page2.html"><span data-cn>課程</span><span data-en>Programs</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="page3.html"><span data-cn>場館</span><span data-en>Gallery</span></a></li>
+                     <li class="nav-item"><a class="nav-link" href="page6.html"><span data-cn>用品及器材</span><span data-en>equipmemt</span></a></li>
                     <li class="nav-item"><a class="nav-link btn btn-primary text-white px-5" href="#contact"><span data-cn>立即加入</span><span data-en>JOIN NOW</span></a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero -->
-    <section id="home" class="hero">
+<!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <h1 class="display-1 fw-bold mb-4">
-                <span data-cn>Ronald<br>乒乓球俱樂部</span>
-                <span data-en>RONALD<br>TABLE TENNIS CLUB</span>
-            </h1>
-            <p class="lead fs-3 mb-5">
-                <span data-cn>專業教練 • 每周比賽 • 首堂免費</span>
-                <span data-en>Pro Coaching • Weekly Tournaments • First Session Free</span>
-            </p>
-            <a href="#contact" class="btn btn-primary btn-lg shadow-lg">
-                <span data-cn>立即加入 – 首堂免費</span>
-                <span data-en>JOIN NOW – FIRST SESSION FREE</span>
-            </a>
+            <a class="navbar-brand fw-bold fs-4" href="#">🏓 PingPong Pro Shop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#rackets">Rackets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#why">Why Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Rackets Grid -->
+    <section id="rackets" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">Our Best-Selling Rackets</h2>
+            <div class="row g-4">
+
+                <!-- Racket 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card racket-card h-100">
+                        <div class="position-relative">
+                            <img src="https://www.butterfly-global.com/en/products/item/37221_01.jpg" class="card-img-top" alt="Butterfly ALC">
+                            <span class="badge bg-danger position-absolute top-0 end-0 m-3">PRO</span>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">【樊振东 ALC】</h5>
+                            <p class="specs">5層純木+兩層ALC纖維<br>
+                            進攻橫拍</p>
+                            <p class="price">$1080 <span class="old-price">$1280</span></p>
+                            <button class="btn btn-success w-100">加入購物車</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Racket 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card racket-card h-100">
+                        <div class="position-relative">
+                            <img src="https://www.butterfly-global.com/en/products/item/30041_01m.jpg" class="card-img-top" alt="VISCARIA">
+                            <span class="badge bg-warning position-absolute top-0 start-0 m-3 text-dark">BEST SELLER</span>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">【VISCARIA】</h5>
+                            <p class="specs">5層純木+兩層ALC纖維<br>
+                            進攻橫拍</p>
+                            <p class="price">$1280</p>
+                            <button class="btn btn-success w-100">加入購物車</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Racket 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card racket-card h-100">
+                        <div class="position-relative">
+                            <img src="https://www.butterfly-global.com/en/products/item/35861_01.jpg" class="card-img-top" alt="Stiga Dynasty Carbon">
+                            <span class="badge badge-new position-absolute top-0 end-0 m-3">NEW</span>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">【TIMO BOLL ALC】</h5>
+                            <p class="specs">5層純木+兩層ALC纖維<br>
+                            進攻橫拍</p>
+                            <p class="price">$1080</p>
+                            <button class="btn btn-success w-100">加入購物車</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more rackets the same way -->
+
+            </div>
         </div>
     </section>
-
       <!-- Floating Buttons -->
     <a href="https://wa.me/85292949860" target="_blank" class="whatsapp-float d-flex align-items-center justify-content-center">
         <i class="fab fa-whatsapp"></i>
