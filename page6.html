@@ -66,7 +66,7 @@
         /* Back-to-Top button – sits directly above the WhatsApp button */
 .back-to-top {
     left: 20px;
-    bottom: 90px;           /* 20px (bottom gap) + 60px (WhatsApp height) + 10px extra space */
+    center: 20px;           /* 20px (bottom gap) + 60px (WhatsApp height) + 10px extra space */
     background: var(--primary);
     color: white;
     display: none;          /* shown with JS when scrolling */
@@ -175,67 +175,87 @@
       width: auto;              /* keeps original ratio */
       flex-shrink: 0;           /* prevents squashing */
     }
-         .racket-card {
-            transition: all 0.3s;
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        /* 主內容 */
+        .container { max-width:1200px; margin:0 auto; padding:40px 20px 100px; }
+        .filters { margin-bottom:35px; text-align:center; }
+        .filters button {
+            background:none; border:2px solid var(--blue); color:var(--blue); padding:12px 24px;
+            margin:0 8px; border-radius:50px; cursor:pointer; transition:0.3s; font-size:1.1rem;
         }
-        .racket-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
-        .price { font-size: 2rem; color: #e74c3c; font-weight: 700; }
-        .old-price { text-decoration: line-through; color: #95a5a6; margin-left: 10px; }
-        .badge-pro { background: #c0392b; }
-        .badge-new { background: #27ae60; }
-        .specs { font-size: 0.9rem; color: #555; }
-        footer { background: #2c3e50; color: #ecf0f1; }
-        /* 右下角購物車按鈕 */
-        #floating-cart-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            width: 66px;
-            height: 66px;
-            background: #e74c3c;
-            color: white;
-            border-radius: 50%;
-            border: none;
-            font-size: 30px;
-            box-shadow: 0 6px 20px rgba(231,76,60,0.5);
-            z-index: 1030;
+        .filters button.active, .filters button:hover { background:var(--blue); color:white; }
+
+        /* 商品格子 */
+        .products-grid {
+            display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:28px;
         }
-        #floating-cart-btn:hover { transform: scale(1.1); }
-        #floating-cart-btn.jump { animation: jump 0.5s; }
-        @keyframes jump { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-15px) } }
-        #floating-cart-btn .badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 15px;
-            padding: 6px 10px;
+        .product-card {
+            background:white; border-radius:18px; overflow:hidden; box-shadow:0 8px 25px rgba(0,0,0,0.1);
+            transition:all 0.4s; text-align:center;
+        }
+        .product-card:hover { transform:translateY(-12px); box-shadow:0 20px 40px rgba(0,0,0,0.18); }
+        .product-card img { width:100%; height:300px; object-fit:cover; }
+        .product-info { padding:22px; }
+        .product-info h3 { font-size:1.32rem; margin-bottom:10px; height:56px; display:flex; align-items:center; justify-content:center; }
+        .price { font-size:1.75rem; color:var(--red); font-weight:700; margin:12px 0; }
+        .old-price { color:var(--gray); text-decoration:line-through; font-size:1.2rem; margin-left:10px; }
+        .btn-cart {
+            background:var(--red); color:white; border:none; padding:14px 30px;
+            border-radius:50px; cursor:pointer; font-size:1.15rem; width:100%; margin-top:18px;
+            transition:0.3s;
+        }
+        .btn-cart:hover { background:#c1121f; }
+
+        /* 右下角懸浮購物車 */
+        .floating-cart {
+            position:fixed; right:20px; bottom:20px; background:var(--red);
+            width:66px; height:66px; border-radius:50%; display:flex; align-items:center;
+            justify-content:center; box-shadow:0 10px 30px rgba(230,57,70,0.5); cursor:pointer;
+            z-index:999; animation:pulse 2s infinite;
+        }
+        .floating-cart:hover { transform:scale(1.12); background:#c1121f; }
+        .floating-cart-count {
+            position:absolute; top:-10px; right:-10px; background:white; color:var(--red);
+            font-weight:bold; font-size:15px; min-width:28px; height:28px; line-height:28px;
+            border-radius:50%; text-align:center; box-shadow:0 3px 10px rgba(0,0,0,0.3);
+        }
+        @keyframes pulse {
+            0%,100% { box-shadow:0 10px 30px rgba(230,57,70,0.5); }
+            50% { box-shadow:0 10px 45px rgba(230,57,70,0.7); }
         }
 
-        /* 飛入動畫 */
-        .fly-item {
-            position: fixed;
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            object-fit: cover;
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: fly 1s ease-in-out forwards;
+        /* 真正「丟進購物車」動畫 */
+        .flying-item {
+            position:fixed; width:90px; height:90px; border-radius:14px;
+            box-shadow:0 12px 35px rgba(0,0,0,0.35); pointer-events:none; z-index:9999;
+            animation:throwToCart 1.1s cubic-bezier(0.25,0.8,0.25,1) forwards;
         }
-        @keyframes fly {
-            to { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+        @keyframes throwToCart {
+            0%   { opacity:1; transform:translate(0,0) rotate(0deg) scale(1); }
+            40%  { transform:translate(80px,-180px) rotate(45deg) scale(0.9); }
+            80%  { opacity:0.9; transform:translate(calc(100vw - 150px), calc(100vh - 150px)) rotate(360deg) scale(0.6); }
+            100% { opacity:0; transform:translate(calc(100vw - 110px), calc(100vh - 110px)) rotate(400deg) scale(0.2); }
         }
+        @keyframes cartBounce {
+            0%   { transform:scale(1)    translateY(0); }
+            40%  { transform:scale(1.3)  translateY(-18px); }
+            60%  { transform:scale(0.95) translateY(6px); }
+            80%  { transform:scale(1.15) translateY(-10px); }
+            100% { transform:scale(1)    translateY(0); }
+        }
+        .cart-bounce { animation:cartBounce 0.8s ease-out; }
 
-        /* 側邊欄與遮罩 */
-        .cart-sidebar { position:fixed; top:0; right:-400px; width:380px; height:100%; background:white; box-shadow:-5px 0 15px rgba(0,0,0,0.2); transition:0.4s; z-index:1050; overflow-y:auto; }
-        .cart-sidebar.open { right:0; }
-        .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:0.3s; z-index:1040; }
-        .overlay.show { opacity:1; pointer-events:auto; }
+        /* 購物車視窗 */
+        .cart-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7);
+            z-index:1000; justify-content:center; align-items:center; }
+        .cart-content { background:white; width:90%; max-width:520px; border-radius:18px; padding:35px; max-height:85vh; overflow-y:auto; }
+        .close-cart { float:right; font-size:2.5rem; cursor:pointer; color:#999; }
+        .cart-item { display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-bottom:1px solid #eee; }
+
+        @media (max-width:768px) {
+            .products-grid { grid-template-columns:repeat(2,1fr); }
+            .floating-cart { width:58px; height:58px; right:15px; bottom:15px; }
+            .floating-cart svg { width:28px; height:28px; }
+        }
   </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="80">
@@ -297,7 +317,7 @@
                             <p class="specs">5層純木+兩層ALC纖維<br>
                             進攻橫拍</p>
                             <p class="price">$1080 <span class="old-price">$1280</span></p>
-                            <button class="floating-cart-btn" onclick="addToCart('狂飆龍5', 1880, this)">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('樊振东 ALC', 1080, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -314,7 +334,7 @@
                             <p class="specs">5層純木+兩層ALC纖維<br>
                             進攻橫拍</p>
                             <p class="price">$1280</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                           <button class="btn-cart" onclick="addToCart('VISCARIA', 1280, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -331,7 +351,7 @@
                             <p class="specs">5層純木+兩層ALC纖維<br>
                             進攻橫拍</p>
                             <p class="price">$1080</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('TIMO BOLL ALC', 1080, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -347,7 +367,7 @@
                             <p class="specs">5層純木+兩層ALC纖維【內纖維】<br>
                                 進攻橫拍 </p>
                             <p class="price">$1080</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                           <button class="btn-cart" onclick="addToCart('张本智和 INNERFORCE ALC', 1080, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -363,7 +383,7 @@
                             <p class="specs">5層純木+兩層Super ALC纖維<br>
                                 進攻橫拍 </p>
                             <p class="price">$1500</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('VISCARIA SUPER ALC', 1500, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -379,7 +399,7 @@
                             <p class="specs">5層純木+兩層Super ALC纖維<br>
                                 進攻橫拍 </p>
                             <p class="price">$1600</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('樊振东 SUPER ALC', 1600, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -395,7 +415,7 @@
                             <p class="specs">5層純木+ 兩層Super ALC纖維【內纖維】<br>
                                 進攻橫拍 </p>
                             <p class="price">$1350</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('张本智和 INNERFORCE SUPER ALC', 1350, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -411,7 +431,7 @@
                             <p class="specs">5層純木+ 兩層ZLC纖維<br>
                                 進攻橫拍 </p>
                             <p class="price">$1500</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                             <button class="btn-cart" onclick="addToCart('水谷隼 ZLC', 1500, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -427,7 +447,7 @@
                             <p class="specs">5層純木+兩層超級ZLC纖維<br>
                                 進攻橫拍 </p>
                             <p class="price">$2085</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                             <button class="btn-cart" onclick="addToCart('林昀儒 SUPER ZLC', 1500, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -444,7 +464,7 @@
                             <p class="specs">黏性HIGH TENSION反膠<br>
                            </p>
                             <p class="price">$550</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                             <button class="btn-cart" onclick="addToCart('DIGNICS 09C', 550, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -461,7 +481,7 @@
 
                            </p>
                             <p class="price">$380</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('紅雙喜狂飆-省套藍海綿NEO', 380, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -477,7 +497,7 @@
                             <p class="specs">HIGH TENSION反膠<br>
                             </p>
                             <p class="price">$550</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('DIGNICS 05', 550, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -493,7 +513,7 @@
                             <p class="specs">颜色:<br>
                                 白、金、黑色 </p>
                             <p class="price">$550</p>
-                            <button class="btn btn-success w-100">加入購物車</button>
+                            <button class="btn-cart" onclick="addToCart('LEZOLINE RIFONES', 550, this)">加入購物車</button>
                         </div>
                     </div>
                 </div>
@@ -501,140 +521,113 @@
 
             </div>
         </div>
-        <!-- 右下角購物車按鈕 -->
-<button id="floating-cart-btn" class="btn btn-danger rounded-circle">
-    <i class="fas fa-shopping-cart"></i>
-    <span class="badge bg-light text-danger" id="cart-badge">0</span>
-</button>
-        <!-- 購物車側邊欄 -->
-<div class="cart-sidebar bg-light" id="cart-sidebar">
-    <div class="p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4>購物車</h4>
-            <button class="btn btn-close" id="close-cart"></button>
+        <!-- 右下角懸浮購物車 -->
+<div class="floating-cart" onclick="toggleCart()">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+    <span class="floating-cart-count" id="cartCount">0</span>
+</div>
+
+<!-- 購物車彈出視窗 -->
+<div class="cart-modal" id="cartModal">
+    <div class="cart-content">
+        <span class="close-cart" onclick="toggleCart()">×</span>
+        <h2 style="text-align:center;margin-bottom:25px;">我的購物車</h2>
+        <div id="cartItems"><p style="text-align:center;color:#999;margin:40px 0;">購物車是空的</p></div>
+        <div style="margin-top:30px;padding-top:25px;border-top:3px solid #eee;text-align:center;">
+            <h3>總金額：<span id="totalPrice" style="color:var(--red);font-size:2rem;">0</span> 元</h3>
+            <button style="background:#2a9d8f;color:white;padding:16px 50px;border:none;border-radius:50px;font-size:1.3rem;margin-top:20px;">
+                前往結帳
+            </button>
         </div>
-        <div id="cart-items-list" class="mb-3">
-            <p class="text-muted">你的購物車是空的</p>
-        </div>
-        <hr>
-        <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
-            <span>總計：</span>
-            <span id="cart-total-hk">$0</span>
-        </div>
-        <button id="checkout-btn" class="btn btn-danger btn-lg w-100" disabled>
-            去結帳（Stripe）
-        </button>
     </div>
-</div><div class="overlay" id="overlay"></div>
+</div>
 
-<script src="https://js.stripe.com/v3/"></script>
 <script>
-    const stripe = Stripe('YOUR_PUBLISHABLE_KEY_HERE');   // 記得改你的 key
+let cart = [];
 
-    let cart = JSON.parse(localStorage.getItem('pingpong_cart') || '[]');
+function addToCart(name, price, button) {
+    const existing = cart.find(i => i.name === name);
+    if (existing) existing.qty += 1;
+    else cart.push({ name, price, qty: 1 });
+    updateCart();
 
-    // 更新側邊欄與數字
-    function updateCart() {
-        const badge = document.getElementById('cart-badge');
-        const list = document.getElementById('cart-items-list');
-        const total = document.getElementById('cart-total-hk');
-        const btn = document.getElementById('checkout-btn');
+    // 丟進購物車動畫
+    const img = button.closest('.product-card').querySelector('img');
+    const flyer = document.createElement('img');
+    flyer.src = img.src;
+    flyer.classList.add('flying-item');
+    const rect = img.getBoundingClientRect();
+    flyer.style.left = (rect.left + rect.width/2 - 45) + 'px';
+    flyer.style.top  = (rect.top  + rect.height/2 - 45) + 'px';
+    document.body.appendChild(flyer);
 
-        const totalItems = cart.reduce((s,i)=>s+i.qty,0);
-        badge.textContent = totalItems;
+    // 購物車彈跳
+    const cartBtn = document.querySelector('.floating-cart');
+    cartBtn.classList.remove('cart-bounce');
+    void cartBtn.offsetWidth;
+    cartBtn.classList.add('cart-bounce');
 
-        if (cart.length===0) {
-            list.innerHTML = '<p class="text-muted">你的購物車是空的</p>';
-            total.textContent = '$0';
-            btn.disabled = true;
-            return;
-        }list.innerHTML = cart.map((item,idx)=>`
-            <div class="d-flex justify-content-between align-items-center border-bottom py-3">
-                <div>
-                    <strong>${item.name}</strong><br>
-                    <small>$${item.price/100}</small>
+    setTimeout(() => flyer.remove(), 1150);
+
+    // 按鈕變綠
+    const orig = button.innerHTML;
+    button.innerHTML = '已丟進購物車';
+    button.style.background = '#2a9d8f';
+    setTimeout(() => {
+        button.innerHTML = orig;
+        button.style.background = '';
+    }, 1500);
+}
+
+function updateCart() {
+    const totalQty = cart.reduce((s,i)=>s+i.qty,0);
+    document.getElementById('cartCount').textContent = totalQty;
+
+    const itemsDiv = document.getElementById('cartItems');
+    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+
+    if (cart.length===0) {
+        itemsDiv.innerHTML = "<p style='text-align:center;color:#999;margin:40px 0;'>購物車是空的</p>";
+    } else {
+        itemsDiv.innerHTML = cart.map((item,idx)=>`
+            <div class="cart-item">
+                <div style="flex:1;font-weight:500;">${item.name}</div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <button onclick="changeQty(${idx},-1)" style="width:32px;height:32px;border:1px solid #ddd;background:#fafafa;">-</button>
+                    <span style="min-width:30px;text-align:center;font-weight:600;">${item.qty}</span>
+                    <button onclick="changeQty(${idx},1)" style="width:32px;height:32px;border:1px solid #ddd;background:#fafafa;">+</button>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${idx},-1)">−</button>
-                    <span class="fw-bold">${item.qty}</span>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${idx},1)">+</button>
-                    <button class="btn btn-sm btn-danger ms-2" onclick="removeItem(${idx})">×</button>
-                </div>
+                <div style="color:var(--red);font-weight:600;font-size:1.2rem;">$${item.price*item.qty}</div>
+                <button onclick="removeItem(${idx})" style="color:#e63946;background:none;border:none;font-size:1.8rem;">×</button>
             </div>
         `).join('');
-
-        const sum = cart.reduce((s,i)=>s + i.price*i.qty,0);
-        total.textContent = '$' + (sum/100).toFixed(0);
-        btn.disabled = false;
-    }window.changeQty = (idx,delta) => {
-        cart[idx].qty += delta;
-        if (cart[idx].qty <= 0) cart.splice(idx,1);
-        localStorage.setItem('pingpong_cart', JSON.stringify(cart));
-        updateCart();
-    };
-    window.removeItem = (idx) => { cart.splice(idx,1); localStorage.setItem('pingpong_cart', JSON.stringify(cart)); updateCart(); };
-
-    // 飛入動畫
-    function flyToCart(img) {
-        const flyer = img.cloneNode();
-        flyer.classList.add('fly-item');
-        const rect = img.getBoundingClientRect();
-        flyer.style.left = rect.left + rect.width/2 - 40 + 'px';
-        flyer.style.top = rect.top + 'px';
-
-        const cartBtn = document.getElementById('floating-cart-btn');
-        const cartRect = cartBtn.getBoundingClientRect();
-        const dx = cartRect.left + cartRect.width/2 - rect.left - rect.width/2;
-        const dy = cartRect.top + cartRect.height/2 - rect.top - rect.height/2;
-
-        flyer.style.setProperty('--dx', dx + 'px');
-        flyer.style.setProperty('--dy', dy + 'px');
-        document.body.appendChild(flyer);
-        flyer.addEventListener('animationend', () => {
-            flyer.remove();
-            cartBtn.classList.add('jump');
-            setTimeout(()=>cartBtn.classList.remove('jump'),500);
-        });
     }
-    // 加入購物車按鈕
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const img = this.closest('.card').querySelector('.fly-img');
-            flyToCart(img);
+    document.getElementById('totalPrice').textContent = total.toLocaleString();
+}
 
-            const item = {
-                id: this.dataset.id,
-                name: this.dataset.name,
-                price: parseInt(this.dataset.price),
-                qty: 1
-            };
-            const exist = cart.find(x => x.id === item.id);
-            if (exist) exist.qty++; else cart.push(item);
+function changeQty(i,c){ cart[i].qty+=c; if(cart[i].qty<=0) cart.splice(i,1); updateCart(); }
+function removeItem(i){ cart.splice(i,1); updateCart(); }
+function toggleCart(){
+    const m = document.getElementById('cartModal');
+    m.style.display = m.style.display==='flex' ? 'none' : 'flex';
+    updateCart();
+}
 
-            localStorage.setItem('pingpong_cart', JSON.stringify(cart));
-            updateCart();
+// 分類篩選
+document.querySelectorAll('.filters button').forEach(b=>{
+    b.addEventListener('click',()=>{
+        document.querySelector('.filters button.active').classList.remove('active');
+        b.classList.add('active');
+        const f = b.dataset.filter;
+        document.querySelectorAll('.product-card').forEach(c=>{
+            c.style.display = (f==='all' || c.dataset.brand===f) ? 'block' : 'none';
         });
     });
-    // 開關側邊欄
-    document.getElementById('floating-cart-btn').onclick =
-    document.getElementById('close-cart').onclick =
-    document.getElementById('overlay').onclick = () => {
-        document.getElementById('cart-sidebar').classList.toggle('open');
-        document.getElementById('overlay').classList.toggle('show');
-    };
-
-    // 結帳
-    document.getElementById('checkout-btn').onclick = async () => {
-        const r = await fetch('checkout.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({items: cart})
-        });
-        const sess = await r.json();
-        stripe.redirectToCheckout({sessionId: sess.id});
-    };
-
-    updateCart();   // 頁面載入時顯示正確數字
+});
 </script>
     </section>
       <!-- Floating Buttons -->
