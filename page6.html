@@ -160,6 +160,53 @@
         .badge-new { background: #27ae60; }
         .specs { font-size: 0.9rem; color: #555; }
         footer { background: #2c3e50; color: #ecf0f1; }
+        /* 右下角購物車按鈕 */
+        #floating-cart-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 66px;
+            height: 66px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            border: none;
+            font-size: 30px;
+            box-shadow: 0 6px 20px rgba(231,76,60,0.5);
+            z-index: 1030;
+        }
+        #floating-cart-btn:hover { transform: scale(1.1); }
+        #floating-cart-btn.jump { animation: jump 0.5s; }
+        @keyframes jump { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-15px) } }
+        #floating-cart-btn .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 15px;
+            padding: 6px 10px;
+        }
+
+        /* 飛入動畫 */
+        .fly-item {
+            position: fixed;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fly 1s ease-in-out forwards;
+        }
+        @keyframes fly {
+            to { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+        }
+
+        /* 側邊欄與遮罩 */
+        .cart-sidebar { position:fixed; top:0; right:-400px; width:380px; height:100%; background:white; box-shadow:-5px 0 15px rgba(0,0,0,0.2); transition:0.4s; z-index:1050; overflow-y:auto; }
+        .cart-sidebar.open { right:0; }
+        .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:0.3s; z-index:1040; }
+        .overlay.show { opacity:1; pointer-events:auto; }
   </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="80">
@@ -425,6 +472,141 @@
 
             </div>
         </div>
+        <!-- 右下角購物車按鈕 -->
+<button id="floating-cart-btn" class="btn btn-danger rounded-circle">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="badge bg-light text-danger" id="cart-badge">0</span>
+</button>
+        <!-- 購物車側邊欄 -->
+<div class="cart-sidebar bg-light" id="cart-sidebar">
+    <div class="p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>購物車</h4>
+            <button class="btn btn-close" id="close-cart"></button>
+        </div>
+        <div id="cart-items-list" class="mb-3">
+            <p class="text-muted">你的購物車是空的</p>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+            <span>總計：</span>
+            <span id="cart-total-hk">$0</span>
+        </div>
+        <button id="checkout-btn" class="btn btn-danger btn-lg w-100" disabled>
+            去結帳（Stripe）
+        </button>
+    </div>
+</div><div class="overlay" id="overlay"></div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('YOUR_PUBLISHABLE_KEY_HERE');   // 記得改你的 key
+
+    let cart = JSON.parse(localStorage.getItem('pingpong_cart') || '[]');
+
+    // 更新側邊欄與數字
+    function updateCart() {
+        const badge = document.getElementById('cart-badge');
+        const list = document.getElementById('cart-items-list');
+        const total = document.getElementById('cart-total-hk');
+        const btn = document.getElementById('checkout-btn');
+
+        const totalItems = cart.reduce((s,i)=>s+i.qty,0);
+        badge.textContent = totalItems;
+
+        if (cart.length===0) {
+            list.innerHTML = '<p class="text-muted">你的購物車是空的</p>';
+            total.textContent = '$0';
+            btn.disabled = true;
+            return;
+        }list.innerHTML = cart.map((item,idx)=>`
+            <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+                <div>
+                    <strong>${item.name}</strong><br>
+                    <small>$${item.price/100}</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${idx},-1)">−</button>
+                    <span class="fw-bold">${item.qty}</span>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(${idx},1)">+</button>
+                    <button class="btn btn-sm btn-danger ms-2" onclick="removeItem(${idx})">×</button>
+                </div>
+            </div>
+        `).join('');
+
+        const sum = cart.reduce((s,i)=>s + i.price*i.qty,0);
+        total.textContent = '$' + (sum/100).toFixed(0);
+        btn.disabled = false;
+    }window.changeQty = (idx,delta) => {
+        cart[idx].qty += delta;
+        if (cart[idx].qty <= 0) cart.splice(idx,1);
+        localStorage.setItem('pingpong_cart', JSON.stringify(cart));
+        updateCart();
+    };
+    window.removeItem = (idx) => { cart.splice(idx,1); localStorage.setItem('pingpong_cart', JSON.stringify(cart)); updateCart(); };
+
+    // 飛入動畫
+    function flyToCart(img) {
+        const flyer = img.cloneNode();
+        flyer.classList.add('fly-item');
+        const rect = img.getBoundingClientRect();
+        flyer.style.left = rect.left + rect.width/2 - 40 + 'px';
+        flyer.style.top = rect.top + 'px';
+
+        const cartBtn = document.getElementById('floating-cart-btn');
+        const cartRect = cartBtn.getBoundingClientRect();
+        const dx = cartRect.left + cartRect.width/2 - rect.left - rect.width/2;
+        const dy = cartRect.top + cartRect.height/2 - rect.top - rect.height/2;
+
+        flyer.style.setProperty('--dx', dx + 'px');
+        flyer.style.setProperty('--dy', dy + 'px');
+        document.body.appendChild(flyer);
+        flyer.addEventListener('animationend', () => {
+            flyer.remove();
+            cartBtn.classList.add('jump');
+            setTimeout(()=>cartBtn.classList.remove('jump'),500);
+        });
+    }
+    // 加入購物車按鈕
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const img = this.closest('.card').querySelector('.fly-img');
+            flyToCart(img);
+
+            const item = {
+                id: this.dataset.id,
+                name: this.dataset.name,
+                price: parseInt(this.dataset.price),
+                qty: 1
+            };
+            const exist = cart.find(x => x.id === item.id);
+            if (exist) exist.qty++; else cart.push(item);
+
+            localStorage.setItem('pingpong_cart', JSON.stringify(cart));
+            updateCart();
+        });
+    });
+    // 開關側邊欄
+    document.getElementById('floating-cart-btn').onclick =
+    document.getElementById('close-cart').onclick =
+    document.getElementById('overlay').onclick = () => {
+        document.getElementById('cart-sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('show');
+    };
+
+    // 結帳
+    document.getElementById('checkout-btn').onclick = async () => {
+        const r = await fetch('checkout.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({items: cart})
+        });
+        const sess = await r.json();
+        stripe.redirectToCheckout({sessionId: sess.id});
+    };
+
+    updateCart();   // 頁面載入時顯示正確數字
+</script>
     </section>
       <!-- Floating Buttons -->
     <a href="https://wa.me/85292949860" target="_blank" class="whatsapp-float d-flex align-items-center justify-content-center">
