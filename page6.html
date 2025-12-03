@@ -225,6 +225,15 @@
             .floating-cart { width:58px; height:58px; right:15px; bottom:15px; }
             .floating-cart svg { width:28px; height:28px; }
         }
+         total { font-size:2.5rem; color:var(--red); font-weight:bold; margin:25px 0; }
+        .alipay-qr { width:300px; height:300px; margin:25px auto; border:10px solid #00a0e9; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
+/* 保留你最愛的「前往結帳」按鈕 */
+        .checkout-btn {
+            background:#00ba00; color:white; border:none; padding:18px 50px;
+            border-radius:50px; font-size:1.5rem; cursor:pointer; margin-top:20px;
+            box-shadow:0 8px 25px rgba(0,186,0,0.4); transition:0.3s;
+        }
+        .checkout-btn:hover { background:#00a000; transform:scale(1.05); }
   </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="80">
@@ -525,9 +534,18 @@
         <div id="cartItems"><p style="text-align:center;color:#999;margin:40px 0;">購物車是空的</p></div>
         <div style="margin-top:30px;padding-top:25px;border-top:3px solid #eee;text-align:center;">
             <h3>總金額：<span id="totalPrice" style="color:var(--red);font-size:2rem;">0</span> 元</h3>
-            <button style="background:#2a9d8f;color:white;padding:16px 50px;border:none;border-radius:50px;font-size:1.3rem;margin-top:20px;">
+               <button class="checkout-btn" onclick="showAlipayQR()">
                 前往結帳
             </button>
+            <!-- 點「前往結帳」後顯示的支付宝收款碼（預設隱藏） -->
+        <div id="alipaySection" style="display:none; margin-top:30px;">
+            <p style="color:#666; margin-bottom:20px;">請用支付宝掃碼付款～</p>
+            <!-- ★★★ 把這裡換成你自己的支付宝收款碼圖片連結 ★★★ -->
+            <img src="https://i.postimg.cc/1zQzF8Fg/IMG-0619.jpg" alt="個人支付宝收款碼" class="alipay-qr">
+            <!-- 範例：https://i.imgur.com/AbC123d.jpg （上傳到 imgur 後換成你的） -->
+            <p style="margin-top:20px; color:#2a9d8f; font-weight:bold;">
+                轉帳完成後記得跟我說你買了什麼！<br>我立刻幫你留貨／寄出
+            </p>
         </div>
     </div>
 </div>
@@ -594,6 +612,15 @@ function updateCart() {
     }
     document.getElementById('totalPrice').textContent = total.toLocaleString();
 }
+    <!-- 點「前往結帳」後顯示的支付宝收款碼（預設隱藏） -->
+        <div id="alipaySection" style="display:none; margin-top:30px;">
+            <p style="color:#666; margin-bottom:20px;">請用支付宝掃碼付款給我喔～</p>
+            <!-- ★★★ 把這裡換成你自己的支付宝收款碼圖片連結 ★★★ -->
+            <img src="https://i.imgur.com/XXXXXXXXX.jpg" alt="阿哲個人支付宝收款碼" class="alipay-qr">
+            <!-- 範例：https://i.imgur.com/AbC123d.jpg （上傳到 imgur 後換成你的） -->
+            <p style="margin-top:20px; color:#2a9d8f; font-weight:bold;">
+                轉帳完成後記得跟我說你買了什麼！<br>我立刻幫你留貨／寄出
+            </p>
 
 function changeQty(i,c){ cart[i].qty+=c; if(cart[i].qty<=0) cart.splice(i,1); updateCart(); }
 function removeItem(i){ cart.splice(i,1); updateCart(); }
