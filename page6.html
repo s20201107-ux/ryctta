@@ -522,9 +522,6 @@
             <!-- ★★★ 把這裡換成你自己的支付宝收款碼圖片連結 ★★★ -->
             <img src="https://i.postimg.cc/1zQzF8Fg/IMG-0619.jpg" alt="個人支付宝收款碼" class="alipay-qr">
             <!-- 範例：https://i.imgur.com/AbC123d.jpg （上傳到 imgur 後換成你的） -->
-            <p style="margin-top:20px; color:#2a9d8f; font-weight:bold;">
-                轉帳完成後記得跟我說你買了什麼！<br>我立刻幫你留貨／寄出
-            </p>
         </div>
     </div>
 </div>
@@ -591,15 +588,16 @@ function updateCart() {
     }
     document.getElementById('totalPrice').textContent = total.toLocaleString();
 }
-    <!-- 點「前往結帳」後顯示的支付宝收款碼（預設隱藏） -->
-        <div id="alipaySection" style="display:none; margin-top:30px;">
-            <p style="color:#666; margin-bottom:20px;">請用支付宝掃碼付款給我喔～</p>
-            <!-- ★★★ 把這裡換成你自己的支付宝收款碼圖片連結 ★★★ -->
-            <img src="https://i.imgur.com/XXXXXXXXX.jpg" alt="阿哲個人支付宝收款碼" class="alipay-qr">
-            <!-- 範例：https://i.imgur.com/AbC123d.jpg （上傳到 imgur 後換成你的） -->
-            <p style="margin-top:20px; color:#2a9d8f; font-weight:bold;">
-                轉帳完成後記得跟我說你買了什麼！<br>我立刻幫你留貨／寄出
-            </p>
+   // 點「前往結帳」→ 顯示支付宝收款碼
+function showAlipayQR() {
+    if (cart.length === 0) {
+        alert('購物車是空的喔！');
+        return;
+    }
+    document.getElementById('alipaySection').style.display = 'block';
+    // 同時把「前往結帳」按鈕隱藏（避免重複點）
+    document.querySelector('.checkout-btn').style.display = 'none';
+}
 
 function changeQty(i,c){ cart[i].qty+=c; if(cart[i].qty<=0) cart.splice(i,1); updateCart(); }
 function removeItem(i){ cart.splice(i,1); updateCart(); }
