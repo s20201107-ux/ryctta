@@ -207,7 +207,7 @@
         }
          .total { font-size:2.5rem; color:var(--red); font-weight:bold; margin:25px 0; }
         .alipay-qr { width:300px; height:300px; margin:25px auto; border:10px solid #00a0e9; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
-/* 保留你最愛的「前往結帳」按鈕 */
+/* 前往結帳按鈕 */
         .checkout-btn {
             background:#00ba00; color:white; border:none; padding:18px 50px;
             border-radius:50px; font-size:1.5rem; cursor:pointer; margin-top:20px;
@@ -273,6 +273,34 @@
         <div class="container">
             <h2 class="text-center mb-5 fw-bold">商品目錄</h2>
             <div class="row g-4">
+                <!-- FILTER SECTION -->
+<div class="filters bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-xl font-bold mb-4">Filter by Brand</h2>
+  <div id="brandFilters" class="space-y-3 mb-6">
+    <!-- Brand checkboxes will be added by JavaScript -->
+  </div>
+
+  <h2 class="text-xl font-bold mb-4">Sort By</h2>
+  <select id="sortSelect" class="w-full border border-gray-300 rounded-lg p-3 mb-6">
+    <option value="default">Default</option>
+    <option value="price-low">Price: Low to High</option>
+    <option value="price-high">Price: High to Low</option>
+    <option value="brand-asc">Brand: A to Z</option>
+    <option value="brand-desc">Brand: Z to A</option>
+    <option value="name-asc">Name: A to Z</option>
+  </select>
+
+  <!-- Filter Button -->
+  <button id="filterBtn" 
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+    Apply Filters
+  </button>
+
+  <button id="clearBtn" 
+          class="w-full mt-3 text-gray-600 hover:text-red-600 font-medium py-2">
+    Clear All Filters
+  </button>
+</div>
 
                 <!-- Racket 1 -->
                
@@ -283,6 +311,7 @@
                             <span class="badge bg-danger position-absolute top-0 end-0 m-3">PRO</span>
                         </div>
                         <div class="card-body text-center">
+                            <p class="brand-name text-primary fw-bold mb-1">Butterfly</p>
                             <h5 class="card-title">【樊振东 ALC】</h5>
                             <p class="specs">5層純木+兩層ALC纖維<br>
                             進攻橫拍</p>
@@ -903,6 +932,81 @@
 
             </div>
         </div>
+        <script>
+// Render Brand Checkboxes
+function renderBrandFilters() {
+  const container = document.getElementById('brandFilters');
+  if (!container) return;
+
+  const brands = [...new Set(products.map(item => item.brand))];
+  
+  let html = '';
+  brands.forEach(brand => {
+    html += `
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" value="${brand}" class="brand-checkbox">
+        <span>${brand}</span>
+      </label>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+// Main Function - Called only when Filter button is clicked
+function applyFilters() {
+  const selectedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked'))
+                              .map(cb => cb.value);
+
+  const sortValue = document.getElementById('sortSelect').value;
+
+  let filtered = [...products];
+
+  // Filter by Brand
+  if (selectedBrands.length > 0) {
+    filtered = filtered.filter(racket => selectedBrands.includes(racket.brand));
+  }
+
+  // Sorting
+  switch(sortValue) {
+    case 'price-low':
+      filtered.sort((a, b) => a.price - b.price);
+      break;
+    case 'price-high':
+      filtered.sort((a, b) => b.price - a.price);
+      break;
+    case 'brand-asc':
+      filtered.sort((a, b) => a.brand.localeCompare(b.brand));
+      break;
+    case 'brand-desc':
+      filtered.sort((a, b) => b.brand.localeCompare(a.brand));
+      break;
+    case 'name-asc':
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+  }
+
+  renderProducts(filtered);   // ← Change to your actual function name
+}
+
+// Clear Filters
+function clearFilters() {
+  document.querySelectorAll('.brand-checkbox').forEach(cb => cb.checked = false);
+  document.getElementById('sortSelect').value = 'default';
+  renderProducts(products);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  renderBrandFilters();
+
+  // Button Events
+  document.getElementById('filterBtn').addEventListener('click', applyFilters);
+  document.getElementById('clearBtn').addEventListener('click', clearFilters);
+
+  // Initial display
+  renderProducts(products);
+});
+</script>
    
         <!-- 右下角懸浮購物車 -->
 <div class="floating-cart" onclick="toggleCart()">
