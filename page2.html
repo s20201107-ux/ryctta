@@ -164,7 +164,7 @@
 
 <script>
 // Change this line only — set your deadline
-const end = new Date("2025-12-10 23:59:59").getTime();  // Example: 10 Dec 2025
+const end = new Date("2026-05-12 23:59:59").getTime();  // Example: 10 Dec 2025
 
 setInterval(() => {
   let diff = Math.max(0, (end - Date.now()) / 1000);
@@ -179,7 +179,7 @@ setInterval(() => {
   document.getElementById('m').textContent = m;
   document.getElementById('s').textContent = s;
 
-  if (diff === 0) document.querySelector('.title').textContent = "OFFER ENDED";
+  if (diff === 0) document.querySelector('.title').textContent = "已結束報名";
 }, 500);
 </script>
             </div>
