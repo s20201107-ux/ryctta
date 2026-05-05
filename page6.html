@@ -275,29 +275,27 @@
             <div class="row g-4">
                 <!-- FILTER SECTION -->
 <div class="filters bg-white p-6 rounded-lg shadow-md">
-  <h2 class="text-xl font-bold mb-4">Filter by Brand</h2>
+  <h2 class="text-xl font-bold mb-4">商品挑選</h2>
   <div id="brandFilters" class="space-y-3 mb-6">
     <!-- Brand checkboxes will be added by JavaScript -->
   </div>
 
-  <h2 class="text-xl font-bold mb-4">Sort By</h2>
   <select id="sortSelect" class="w-full border border-gray-300 rounded-lg p-3 mb-6">
-    <option value="default">Default</option>
-    <option value="price-low">Price: Low to High</option>
-    <option value="price-high">Price: High to Low</option>
-    <option value="brand-asc">Brand: A to Z</option>
-    <option value="brand-desc">Brand: Z to A</option>
-    <option value="name-asc">Name: A to Z</option>
+    <option value="price-low">價格（低至高）</option>
+    <option value="price-high">價格（高至低）</option>
+    <option value="brand-asc">品牌:A - Z</option>
+    <option value="brand-desc">品牌: Z - A</option>
+    <option value="name-asc">球拍名稱: A - Z</option>
   </select>
 
   <!-- Filter Button -->
   <button id="filterBtn" 
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+          class="btn-cart">
     Apply Filters
   </button>
 
   <button id="clearBtn" 
-          class="w-full mt-3 text-gray-600 hover:text-red-600 font-medium py-2">
+          class="btn-cart">
     Clear All Filters
   </button>
 </div>
